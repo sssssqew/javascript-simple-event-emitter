@@ -10,14 +10,16 @@ socket.emit = function(event, data){
     handlers[event](data)
 }
 
-const fruits = []
+let fruits = []
 
 // 이벤트핸들러 정의 
 socket.on('displayName', function(data){
+    fruits = []
     console.log(data.value)
     displayEl.innerText = data.value 
 })
 socket.on('addItem', function(data){
+    nameEl.value = ''
     console.log(data.value)
     fruits.push(data.value)
     displayEl.innerText = fruits.join(' ')
