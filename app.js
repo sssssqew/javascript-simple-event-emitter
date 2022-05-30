@@ -26,26 +26,25 @@ socket.on('addItem', function(data){
     displayEl.innerText = fruits.join(' ')
 })
 socket.on('uploadFile', function(data){
-    console.log(data.file)
-    const reader = new FileReader()
-    reader.addEventListener('loadend', (e) => loadFile(data.file, reader))
-    reader.readAsDataURL(data.file)
+    const file = data.file 
+    if(file.type === "application/pdf"){
+        displayEl.innerHTML = `
+            <embed src=${URL.createObjectURL(file)} type=${file.type} scrolling="auto" width="500" height="500"></embed>
+        `
+    }else if(file.type.split('/')[0] === "image"){
+        displayEl.innerHTML = `
+            <img src=${URL.createObjectURL(file)} alt=${file.name} width="300px" height="300px"/>
+        `
+    }else if(file.type === "application/haansoftdocx"){
+        console.log(file)
+        displayEl.innerHTML = `
+        <iframe src="https://docs.google.com/gview?url=${URL.createObjectURL(file)}&embedded=true"></iframe>
+        `
+    }
 })
 console.log(handlers)
 
 // define event handlers 
-function loadFile(file, reader){
-    // console.log(reader.result)
-    if(file.type === "application/pdf"){
-        displayEl.innerHTML = `
-            <embed src=${reader.result} type=${file.type} scrolling="auto" width="500" height="500"></embed>
-        `
-    }else if(file.type.split('/')[0] === "image"){
-        displayEl.innerHTML = `
-            <img src=${reader.result} alt=${file.name} width="300px" height="300px"/>
-        `
-    }
-}
 function handleChange(e){
     socket.emit('displayName', {value: e.target.value})
 }
