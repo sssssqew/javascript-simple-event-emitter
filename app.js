@@ -11,6 +11,7 @@ socket.emit = function(event, data){
 }
 
 let fruits = []
+let files = []
 
 // register event handlers 
 socket.on('displayName', function(data){
@@ -24,23 +25,46 @@ socket.on('addItem', function(data){
     fruits.push(data.value)
     displayEl.innerText = fruits.join(' ')
 })
+socket.on('uploadFile', function(data){
+    console.log(data.file)
+    const reader = new FileReader()
+    reader.addEventListener('loadend', (e) => loadFile(data.file, reader))
+    reader.readAsDataURL(data.file)
+})
 console.log(handlers)
 
 // define event handlers 
+function loadFile(file, reader){
+    // console.log(reader.result)
+    if(file.type === "application/pdf"){
+        displayEl.innerHTML = `
+            <embed src=${reader.result} type=${file.type} scrolling="auto" width="500" height="500"></embed>
+        `
+    }else if(file.type.split('/')[0] === "image"){
+        displayEl.innerHTML = `
+            <img src=${reader.result} alt=${file.name} width="300px" height="300px"/>
+        `
+    }
+}
 function handleChange(e){
     socket.emit('displayName', {value: e.target.value})
 }
 function handleClick(e){
     socket.emit('addItem', {value: 'orange'})
 }
+function handleUpload(e){
+    socket.emit('uploadFile', {file: e.target.files[0]})
+}
 
 // get elements 
 const nameEl = document.getElementById('name')
 const displayEl = document.getElementById('display')
 const btnEl = document.getElementById('add')
+const fileInputEl = document.getElementById('file-input')
 
 // set events 
 nameEl.addEventListener('input', handleChange)
 btnEl.addEventListener('click', handleClick)
+fileInputEl.addEventListener('change', handleUpload)
 
 
