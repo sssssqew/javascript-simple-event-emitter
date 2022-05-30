@@ -1,4 +1,4 @@
-// 소켓 정의 
+// define event emitter
 const socket = {}
 const handlers = {}
 
@@ -12,7 +12,7 @@ socket.emit = function(event, data){
 
 let fruits = []
 
-// 이벤트핸들러 정의 
+// register event handlers 
 socket.on('displayName', function(data){
     fruits = []
     console.log(data.value)
@@ -26,6 +26,7 @@ socket.on('addItem', function(data){
 })
 console.log(handlers)
 
+// define event handlers 
 function handleChange(e){
     socket.emit('displayName', {value: e.target.value})
 }
@@ -33,10 +34,12 @@ function handleClick(e){
     socket.emit('addItem', {value: 'orange'})
 }
 
+// get elements 
 const nameEl = document.getElementById('name')
 const displayEl = document.getElementById('display')
 const btnEl = document.getElementById('add')
 
+// set events 
 nameEl.addEventListener('input', handleChange)
 btnEl.addEventListener('click', handleClick)
 
